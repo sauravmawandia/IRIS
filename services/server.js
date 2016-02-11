@@ -1,44 +1,53 @@
-// server.js
+// load the required modules 
 
-// BASE SETUP
-// =============================================================================
+var restify = require('restify');
+var db = require('./db.js');
 
-// call the packages we need
-var express    = require('express');        // call express
-var app        = express();                 // define our app using express
-var bodyParser = require('body-parser');
+// create the server 
+var server = restify.createServer();
 
 // configure app to use bodyParser()
-// this will let us get the data from a POST
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+// this will let us get the data from POST requests
+server.use(restify.bodyParser( {mapParams: false} ));
 
-var port = process.env.PORT || 8080;        // set our port
-
-// ROUTES FOR OUR API
-var router = express.Router();              // get an instance of the express Router
-
-// middleware to use for all requests
-router.use(function(req, res, next) {
-    // do logging
-    console.log('Something is happening.');
-    next(); // make sure we go to the next routes and don't stop here
+// handler to run for all request prior to the end point
+server.use(function(request, response, next){
+	// do logging
+	//console.log(request.body);
+	
+	next(); // make sure we go to the next routes and don't stop here
 });
 
-// test route to make sure everything is working (accessed at GET http://localhost:8080/api)
-router.get('/:clubcardID', function(req, res) {
-    res.json({ClubcardNumber:1234567890123456789,
-	Name:'Yash',
-	Points:2500});   
+
+// handler for getpoints 
+var getPointsHandler = function(request, response, next){	
+	try {
+		console.log(request.body.clubcardNumber);
+		
+		function callback(result){
+			response.send(200, result);
+			return next();
+		}
+		
+		db.getPoints(request.body.clubcardNumber, callback);		
+	}
+	catch(e){
+		console.log(e);
+	}	
+}
+
+// add routes for the service end points 
+
+server.post('/getpoints', getPointsHandler);
+
+//default route ( accessed at GET http://localhost:8080);
+server.get('/', function(request, response, next){
+
+	response.send( 200, "test response");
+	return next(); // return the next handler to complete the request 
+
 });
 
-// more routes for our API will happen here
-
-// REGISTER OUR ROUTES -------------------------------
-// all of our routes will be prefixed with /api
-app.use('/getPoints', router);
-
-// START THE SERVER
-// =============================================================================
-app.listen(port);
-console.log('Magic happens on port ' + port);
+server.listen(8080, function(){
+	console.log('the points server is up on port 8080');
+})
