@@ -34,21 +34,31 @@ exports.redeemPointsHandler = function (request, response, next) {
 
     try {
         console.log("----------redeemPointsHandler----------");
-
+        
         var data = request.body;
         
         console.log("posted data: " + JSON.stringify(data));
+
+        // callback to send response to client 
+        function sendResponse(result) {
+            if (result != null) {
+                response.send(200, result);
+            }
+            else
+                response.send(401, "");
+            return next();
+        }
 
         // callback fuction once the coupon service returns data
         function recordTransaction(couponData) {
             // insert into transaction and update points
             
-            // 
+            db.updatePointsRedemption(data.clubCardNumber, data.pointsToRedeem, couponData, sendResponse);
         }
 
         // this is callback after the trigger data is retrieved 
         function createCoupon(couponTriggerData) {
-            callCouponService(couponTriggerData)
+            callCouponService(couponTriggerData, recordTransaction)
         }
 
         db.getCouponTriggerData(data.clubCardNumber, data.pointsToRedeem, createCoupon);

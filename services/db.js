@@ -13,23 +13,16 @@ exports.getPoints = function(clubCardNumber, callBack){
 		
 	// this is a asynchronous connection to the db 
 	mongoClient.connect(dbHost, function(err, db){
-		console.log('connecting db');
+		//console.log('connecting db');
 		if ( err ) throw err;
 		 
-		//Query Mongodb and iterate through the results
+		//Query Mongodb to get points for the clubcardNumber
 		result = db.collection(pointCollection)
 		         .findOne({"clubCardNumber" : clubCardNumber}, function(err, doc){ 
 					console.log(doc);
 					callBack(doc);					
 				 });
-				 /*
-				 .toArray(function(err, docs){
-					for(index in docs){
-						console.log(docs[index]);
-						result = docs[index];
-					}
-				});
-		 */ 
+				 
 	});
 }
 
@@ -42,7 +35,7 @@ exports.getCouponTriggerData = function (clubCardNumber, pointsToRedeem, callbac
 
     mongoClient.connect(dbHost, function (err, db) {
 
-        console.log('connected db for redeem points');
+       // console.log('connected db for redeem points');
         
         if (err) throw err;
 
@@ -51,8 +44,73 @@ exports.getCouponTriggerData = function (clubCardNumber, pointsToRedeem, callbac
         // step 1 : looking up for triggerNumber, mailingNumber
         db.collection(triggerLookupCollection)
 		  .findOne({ "voucherValue": voucherValue }, function (err, doc) {
+		      if (doc == null) throw new Error("invalid denomination");
+
 		      //console.log("voucher value: " + JSON.stringify(doc));
 		      callback(doc);
 		  });
     });
 }
+
+exports.updatePointsRedemption = function (clubCardNumber, pointsRedeemed, couponData, callbackMethod) {
+
+    mongoClient.connect(dbHost, function (err, db) {
+
+       // console.log('connected db for redeem points');
+
+        if (err) throw err;
+
+        db.collection(pointCollection).findOne({"clubCardNumber" : clubCardNumber}, function (err, doc) {
+            if(err) return;
+            
+            // redeem points only if pointsToRedeem < existing points
+            if (doc.points > pointsRedeemed) {
+                updateRedemption(clubCardNumber, pointsRedeemed, couponData, db, callbackMethod);
+            }
+            else {
+                throw new Error("insufficient points");
+            }
+               
+        });
+
+    });
+}
+
+function updateRedemption(clubCardNumber, pointsRedeemed, couponData, db, callbackMethod) {
+
+    var returnObj = {};
+    // recording the transaction 
+    db.collection(transactionCollection).insert({
+        clubcardNumber: clubCardNumber,
+        pointsRedeemed: pointsRedeemed,
+        smartBarCodeNumber: couponData.barcodeNumber,
+        couponInstanceID: couponData.couponInstanceID,
+        timeStamp: Date(),
+        status: 'redeemed'
+    }, function (err, records) {
+        if (err) throw err;
+
+        returnObj.clubCardNumber = clubCardNumber;
+        returnObj.transactionID = records["ops"][0]["_id"];
+        returnObj.smartBarcodeNumber = couponData.barcodeNumber;
+
+
+        console.log('inserted into transaction collection');
+
+        // update the points for the clubcardNumber
+
+        db.collection(pointCollection).update(
+            { "clubCardNumber": clubCardNumber }, { $inc: { "points": -pointsRedeemed } }
+            , function (err) {
+
+                if (err) throw err;
+                console.log('updated points ')
+
+                // invoke the call back 
+                callbackMethod(returnObj);
+            }
+        );
+    });
+
+}
+
