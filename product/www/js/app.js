@@ -23,14 +23,18 @@ var app = angular.module('starter', ['ionic'])
   });
 })
 
-app.controller('loginController', function($scope, loginService, $ionicPopup, $state) {
+app.controller('loginController', function($scope, pointService, $ionicPopup, $state) {
     $scope.data = {};
-    $scope.data.clubCardNumber = "";
+    //$scope.data.clubCardNumber = "";
     $scope.login = function() {
         //alert($scope.data.clubCardNumber);
-        loginService.loginUser($scope.data.clubCardNumber).success(function(data) {
-            $state.go('redeem');
-        }).error(function(data) {
+        pointService.loginUser($scope.data.clubCardNumber).success(function(data){
+			debugger;
+		pointService.getPoints($scope.data.clubCardNumber).success(function(data,status){
+			debugger;
+			$state.go('redeem');
+		})
+            }).error(function(data) {
             var alertPopup = $ionicPopup.alert({
                 title: 'Clubcard login failed!',
                 template: 'Please enter valid clubcard!'
@@ -42,13 +46,29 @@ app.controller('loginController', function($scope, loginService, $ionicPopup, $s
 app.controller('redeemController', function($scope, $ionicPopup, $state) {
     $scope.data = {};
     $scope.data.pointToRedeem = "0";
-    $scope.redeem = function() {
+	$scope.redeem = function() {
 		//write logic to call the post method
             $state.go('home');
 		//also write a error message on popup screen for error in redemption of points
 		}
 	})
 	
+ // .controller('myctrl', function ($scope, $http) {
+     // $scope.hello = {name: "boaz"};
+     // $scope.newname = "";
+     // $scope.sendpost = function() {
+         // var data = $.param({
+             // json: json.stringify({
+                 // name: $scope.newname
+             // })
+         // });
+         // $http.post("172.29.178.133:8080/getpoints", data).success(function(data, status) {
+             // $scope.hello = data;
+         // })
+     // }                   
+ // })
+	
+
 .config(function($stateProvider, $urlRouterProvider){
   $stateProvider
 
@@ -68,13 +88,13 @@ app.controller('redeemController', function($scope, $ionicPopup, $state) {
   $urlRouterProvider.otherwise('/home');
  });
 
-app.service('loginService', function($q) {
+app.service('pointService', function($q,$http) {
     return {
         loginUser: function(clubCardNumber) {
             //alert(clubCardNumber);
             var deferred = $q.defer();
             var promise = deferred.promise;
-            if (clubCardNumber == 6666) {
+            if (clubCardNumber == 5555) {
                 deferred.resolve('Welcome!');
             } else {
                 deferred.reject('Wrong credentials.');
@@ -90,6 +110,31 @@ app.service('loginService', function($q) {
                 return promise;
             }
             return promise;
-        }
-    }
-})
+        },
+		
+		getPoints: function (ccnumber){
+		var PostDataResponse;
+		var data = {
+				clubCardNumber: ccnumber
+			};
+			var config ={
+				header:{
+					'Content-Type': 'application/json;'
+				}
+			}
+			debugger;
+			$http.post('172.29.178.133:8080/getPoints',data,config)
+			.success(function(data,status){
+				$q.PostDataResponse = data;
+				return PostDataResponse;
+			})
+			.error(function(data,status){
+				$q.PostDataResponse = "Data: " + data
+				return PostDataResponse;
+			});
+			return PostDataResponse
+			}
+		
+		}	
+		
+    })
