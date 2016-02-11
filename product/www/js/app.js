@@ -66,6 +66,12 @@ var app = angular.module('starter', ['ionic'])
 	controller: "redeemController"
   })
   
+  .state('barcode', {
+    url: "/barcode",
+    templateUrl: "templates/barcodepage.html",
+	controller: "barcodeController"
+  })
+  
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/home');
  });

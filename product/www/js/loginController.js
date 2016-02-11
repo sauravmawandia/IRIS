@@ -6,9 +6,13 @@ app.controller('loginController', function($scope, $ionicPopup, $state, dataServ
 		dataService.getPoints($scope.data.clubCardNumber)
 					.then(
 						function(data){
+							//alert('success from controller');
+							dataService.store('pointsData',data)
 							$state.go('redeem')  
 						},
 						function(error){
+							//alert('failure from controller');
+							//alert(error.status)
 							var alertPopup = $ionicPopup.alert({
 							title: 'Clubcard login failed!',
 							template: 'Clubcard not found!'
