@@ -23,51 +23,33 @@ var app = angular.module('starter', ['ionic'])
   });
 })
 
-app.controller('loginController', function($scope, pointService, $ionicPopup, $state) {
-    $scope.data = {};
-    //$scope.data.clubCardNumber = "";
-    $scope.login = function() {
-        //alert($scope.data.clubCardNumber);
-        pointService.loginUser($scope.data.clubCardNumber).success(function(data){
-			debugger;
-		pointService.getPoints($scope.data.clubCardNumber).success(function(data,status){
-			debugger;
-			$state.go('redeem');
-		})
-            }).error(function(data) {
-            var alertPopup = $ionicPopup.alert({
-                title: 'Clubcard login failed!',
-                template: 'Please enter valid clubcard!'
-            });
-        });
-    }
-})
+// app.controller('loginController', function($scope, $ionicPopup, $state, dataService) {
+    // $scope.data = {};
+    // //$scope.data.clubCardNumber = "";
+    // $scope.login = function() {
+		
+		// dataService.getPoints($scope.data.clubCardNumber)
+					// .then(
+						// function(data){
+							// //alert(data);  
+						// },
+						// function(error){
+							// //alert(error);
+						// }
+					// );
+        // };
+    // })
 
-app.controller('redeemController', function($scope, $ionicPopup, $state) {
-    $scope.data = {};
-    $scope.data.pointToRedeem = "0";
-	$scope.redeem = function() {
-		//write logic to call the post method
-            $state.go('home');
-		//also write a error message on popup screen for error in redemption of points
-		}
-	})
-	
- // .controller('myctrl', function ($scope, $http) {
-     // $scope.hello = {name: "boaz"};
-     // $scope.newname = "";
-     // $scope.sendpost = function() {
-         // var data = $.param({
-             // json: json.stringify({
-                 // name: $scope.newname
-             // })
-         // });
-         // $http.post("172.29.178.133:8080/getpoints", data).success(function(data, status) {
-             // $scope.hello = data;
-         // })
-     // }                   
- // })
-	
+// app.controller('redeemController', function($scope, $ionicPopup, $state) {
+    // $scope.data = {};
+    // $scope.data.pointToRedeem = "0";
+	// $scope.redeem = function() {
+		// //write logic to call the post method
+            // $state.go('home');
+		// //also write a error message on popup screen for error in redemption of points
+		// }
+	// })
+
 
 .config(function($stateProvider, $urlRouterProvider){
   $stateProvider
@@ -88,53 +70,32 @@ app.controller('redeemController', function($scope, $ionicPopup, $state) {
   $urlRouterProvider.otherwise('/home');
  });
 
-app.service('pointService', function($q,$http) {
-    return {
-        loginUser: function(clubCardNumber) {
-            //alert(clubCardNumber);
-            var deferred = $q.defer();
-            var promise = deferred.promise;
-            if (clubCardNumber == 5555) {
-                deferred.resolve('Welcome!');
-            } else {
-                deferred.reject('Wrong credentials.');
-            }
-            promise.success = function(fn) {
-                //alert('success');
-                promise.then(fn);
-                return promise;
-            }
-            promise.error = function(fn) {
-                //alert('failure');
-                promise.then(null, fn);
-                return promise;
-            }
-            return promise;
-        },
+ 
+// app.factory('dataService', function($http){
+	
+	// var baseUrl = "localhost:8080/"; 
+	
+	// var factory = {};
+	
+	// factory.getPoints = function(clubCardNumber){
 		
-		getPoints: function (ccnumber){
-		var PostDataResponse;
-		var data = {
-				clubCardNumber: ccnumber
-			};
-			var config ={
-				header:{
-					'Content-Type': 'application/json;'
-				}
-			}
-			debugger;
-			$http.post('172.29.178.133:8080/getPoints',data,config)
-			.success(function(data,status){
-				$q.PostDataResponse = data;
-				return PostDataResponse;
-			})
-			.error(function(data,status){
-				$q.PostDataResponse = "Data: " + data
-				return PostDataResponse;
-			});
-			return PostDataResponse
-			}
-		
-		}	
-		
-    })
+		// //alert(clubCardNumber);
+		// return $http({
+					// method: 'POST',
+					// url: 'http://localhost:8080/getpoints',
+					// headers: {'Content-Type': 'application/json'},
+					// data: { 'clubcardNumber': clubCardNumber }
+				// }).then(
+					// function(response){ 
+						// return response.data 
+					// },
+					// function(error){ 
+						// return error ;
+					// }
+				// )
+	// }
+	
+	// return factory;
+	
+	
+// });
