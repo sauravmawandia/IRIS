@@ -7,9 +7,9 @@ var dbHost = 'mongodb://saurav:saurav@ds062438.mongolab.com:62438/ngc' //'mongod
 //Name of the collections
 var pointCollection = "points";
 var transactionCollection = "transactions"
+var triggerLookupCollection = "triggerLookup";
 
-
-exports.getPoints = function(clubcardNumber, callBack){
+exports.getPoints = function(clubCardNumber, callBack){
 		
 	// this is a asynchronous connection to the db 
 	mongoClient.connect(dbHost, function(err, db){
@@ -18,10 +18,8 @@ exports.getPoints = function(clubcardNumber, callBack){
 		 
 		//Query Mongodb and iterate through the results
 		result = db.collection(pointCollection)
-		         .findOne({"clubCardNumber" : clubcardNumber}, function(err, doc){ 
+		         .findOne({"clubCardNumber" : clubCardNumber}, function(err, doc){ 
 					console.log(doc);
-					
-					
 					callBack(doc);					
 				 });
 				 /*
@@ -31,13 +29,8 @@ exports.getPoints = function(clubcardNumber, callBack){
 						result = docs[index];
 					}
 				});
-		 */
-		
-		//console.log(result);
-		//return result; 
+		 */ 
 	});
-	
-	console.log('leaving get points method');
 }
 
 exports.test = function(input){
@@ -45,3 +38,21 @@ exports.test = function(input){
 	return input;
 }
 
+exports.getCouponTriggerData = function (clubCardNumber, pointsToRedeem, callback) {
+
+    mongoClient.connect(dbHost, function (err, db) {
+
+        console.log('connected db for redeem points');
+        
+        if (err) throw err;
+
+        var voucherValue = parseInt(pointsToRedeem) / 100;
+        
+        // step 1 : looking up for triggerNumber, mailingNumber
+        db.collection(triggerLookupCollection)
+		  .findOne({ "voucherValue": voucherValue }, function (err, doc) {
+		      //console.log("voucher value: " + JSON.stringify(doc));
+		      callback(doc);
+		  });
+    });
+}
