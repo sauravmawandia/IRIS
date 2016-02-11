@@ -24,7 +24,7 @@ app.factory('dataService', function($http){
 		//alert(clubCardNumber);
 		return $http({
 					method: 'POST',
-					url: 'http://localhost:8080/getpoints',
+					url: 'http://ec2-52-49-218-105.eu-west-1.compute.amazonaws.com/redeempoints',
 					headers: {'Content-Type': 'application/json'},
 					data: { 'clubCardNumber': ccNumber,
 							'pointsToRedeem': pointToRedeem}
