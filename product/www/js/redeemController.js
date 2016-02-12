@@ -24,7 +24,9 @@ app.controller('redeemController', function($scope, $ionicPopup, $state,dataServ
 	
 	//code to populate the voucher denomination field
 	$scope.onDenominationChange = function(){
-		$scope.data.voucherDenomination = $scope.data.pointsToRedeem.value / 100;
+		$scope.data.voucherDenomination = $scope.data.pointsToRedeem.value / 100
+		dataService.store('denomination',$scope.data.voucherDenomination)
+		
 	}
 
 	// redeem method call from the front end of the application
@@ -34,6 +36,7 @@ app.controller('redeemController', function($scope, $ionicPopup, $state,dataServ
 			dataService.redeem($scope.data.clubCardNumber,$scope.data.pointsToRedeem.value)
 				.then(
 					function(data){
+						dataService.store('voucherDetails',data)
 						$state.go('barcode')  
 					},
 					function(error){
