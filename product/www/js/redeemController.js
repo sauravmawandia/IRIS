@@ -45,9 +45,9 @@ app.controller('redeemController', function($scope, $ionicPopup, $state,dataServ
 		}
         else
 		{
-			var alertPopup = $ionicPopup.alert({
-			title: 'Redemption Failed',
-			template: 'Insufficient Points'
+				var alertPopup = $ionicPopup.alert({
+				title: 'Redemption Failed',
+				template: 'Insufficient Points'
 		})
 	}
 }
