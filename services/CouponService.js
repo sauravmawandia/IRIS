@@ -18,6 +18,12 @@ server.post('/createcoupon',function(request, response, next){
 	return next();
 
 });
+server.post('/cancelcoupon',function(request, response, next){
+	response.send(200,"Cancelled the Coupon");
+	
+	return next();
+
+});
 
 
 

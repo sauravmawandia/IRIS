@@ -1,3 +1,8 @@
+var mongo = require('mongodb'),
+    Server = mongo.Server,
+    Db = mongo.Db,
+    ObjectID = require('mongodb').ObjectID;
+
 //Importing the required mongodb driver
 var mongoClient = require('mongodb').MongoClient;
 
@@ -114,3 +119,43 @@ function updateRedemption(clubCardNumber, pointsRedeemed, couponData, db, callba
 
 }
 
+exports.getTransactionDetails=function(transactionID,callBack ){
+	// this is a asynchronous connection to the db 
+	mongoClient.connect(dbHost, function(err, db){
+		//console.log('connecting db');
+		if ( err ) throw err;
+
+		//Query Mongodb to get transaction details for the transactionID
+		var obj_id = new ObjectID(transactionID);
+		result = db.collection(transactionCollection)
+		         .findOne({ _id: obj_id }, function (err, doc) {
+		             if (doc == null)
+                 throw new Error("TransactionID not found")
+					//console.log(doc);
+					callBack(doc);					
+				 });
+				 
+	});
+}
+
+exports.revertPoints = function(transDetails,callBack) {
+	// this is a asynchronous connection to the db 
+	mongoClient.connect(dbHost, function(err, db){
+		//console.log('connecting db');
+		if ( err ) throw err;
+
+        
+        
+        db.collection(pointCollection).update(
+        { "clubCardNumber": transDetails.clubCardNumber }, { $inc: { "points": transDetails.pointsRedeemed} } 
+            , function (err) {
+
+                if (err) throw err;
+                console.log('updated points ')
+
+                // invoke the call back 
+                callBack("added");
+            });
+        });
+
+}

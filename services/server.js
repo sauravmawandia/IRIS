@@ -32,6 +32,7 @@ server.get('/', function (request, response, next) {
 server.post('/getpoints', handlers.getPointsHandler);
 
 server.post('/redeempoints', handlers.redeemPointsHandler);
+server.post('/cancelcoupon', handlers.cancelCouponHandler);
 
 server.listen(8080, function(){
 	console.log('the points server is up on port 8080');

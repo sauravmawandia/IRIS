@@ -58,7 +58,7 @@ exports.redeemPointsHandler = function (request, response, next) {
 
         // this is callback after the trigger data is retrieved 
         function createCoupon(couponTriggerData) {
-            callCouponService(couponTriggerData, recordTransaction)
+            callCouponService('createcoupon',couponTriggerData, recordTransaction)
         }
 
         db.getCouponTriggerData(data.clubCardNumber, data.pointsToRedeem, createCoupon);
@@ -69,8 +69,9 @@ exports.redeemPointsHandler = function (request, response, next) {
 
 }
 
+//method to call a service
+function callCouponService(endPoint,postData, callbackMethod) {
 
-function callCouponService(couponTriggerData, callbackMethod) {
     console.log('call to coupon service');
 
     //Example POST method invocation 
@@ -80,11 +81,11 @@ function callCouponService(couponTriggerData, callbackMethod) {
 
     // set content-type header and data as json in args parameter 
     var args = {
-        data: couponTriggerData,
+        data: postData,
         headers: { "Content-Type": "application/json" }
     };
 
-    client.post("http://ec2-52-49-218-105.eu-west-1.compute.amazonaws.com:443/createcoupon", args, function (data, response) {
+    client.post("http://ec2-52-49-218-105.eu-west-1.compute.amazonaws.com:443/"+endPoint, args, function (data, response) {
         //console.log(response.status);
         // parsed response body as js object 
         console.log("coupon data:" + JSON.stringify(data));
@@ -92,3 +93,41 @@ function callCouponService(couponTriggerData, callbackMethod) {
 
     });
 }
+
+exports.cancelCouponHandler = function (request, response, next) {
+
+    try {
+
+        console.log("Cancel Coupon Handler");
+        var data = request.body;
+
+        //callback to send response to client
+        function sendResponse(result) {
+            if (result != null) {
+                response.send(200);
+            }
+            else
+                response.send(401, "no records found");
+            return next();
+
+        }
+
+        var transDetails = {};
+
+        function revertPoints() {
+            db.revertPoints(transDetails, sendResponse);
+        }
+
+        function cancelCoupon(transactionDetails) {
+            transDetails = transactionDetails;
+            callCouponService('cancelcoupon', { "couponInstanceID": transactionDetails.couponInstanceID }, revertPoints)
+        }
+        console.log(data.transactionID);
+        db.getTransactionDetails(data.transactionID, cancelCoupon);
+
+    }
+    catch (e) {
+        console.log(e);
+    }
+}
+		
