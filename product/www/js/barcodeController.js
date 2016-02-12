@@ -37,9 +37,10 @@ $scope.$on('$ionicView.enter', function(){
 				function(error){
 						$scope.loading = false;
 						var alertPopup = $ionicPopup.alert({
-						title: 'Cancellation Failed',
-						template: 'Voucher not found!'
-						});;
+							title: 'Cancellation Failed',
+							template: 'Voucher not found!'
+						});
+						$state.go('home') 
 					});
 				};
 	}

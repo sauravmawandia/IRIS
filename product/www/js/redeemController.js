@@ -26,6 +26,7 @@ app.controller('redeemController', function($scope, $ionicPopup, $state,dataServ
 	console.log(tempArray);
 	$scope.data.denominations = tempArray;
 	$scope.data.pointsToRedeem = tempArray[0];
+	$scope.data.voucherDenomination = $scope.data.pointsToRedeem.value / 100
 	//code to populate the voucher denomination field
 	$scope.onDenominationChange = function(){
 		$scope.data.voucherDenomination = $scope.data.pointsToRedeem.value / 100
