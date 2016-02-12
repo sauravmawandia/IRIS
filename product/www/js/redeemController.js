@@ -1,5 +1,6 @@
 app.controller('redeemController', function($scope, $ionicPopup, $state,dataService) {
-	debugger;
+	
+	$scope.loading = false;
 	$scope.data = {};
     $scope.data.pointsToRedeem = 0;
 	
@@ -9,19 +10,22 @@ app.controller('redeemController', function($scope, $ionicPopup, $state,dataServ
 	$scope.data.customerName = pointsData.customerName,
 	$scope.data.clubCardPoints = pointsData.points,
 	$scope.data.clubCardNumber= pointsData.clubCardNumber
-		
-	var tempArray = [];
+	$scope.data.voucherDenomination = 0;
+	var masterDenominations = [100,200,500,1000,2000,5000];
+	var tempArray =[]
 	
 	//code for populating the dropdown menu for points to be redeemed
-	while(availablePoints > 1000){
-		var value = Math.floor((availablePoints / 1000)) * 1000;
-		tempArray.push({ "value" : value});
-		availablePoints = availablePoints - 1000; 
+	var i = 0;
+	
+	while(i < masterDenominations.length && availablePoints >= masterDenominations[i]){		
+		tempArray.push({ "value" : masterDenominations[i]});
+		i++;
+		
 	}
 	
 	console.log(tempArray);
 	$scope.data.denominations = tempArray;
-	
+	$scope.data.pointsToRedeem = tempArray[0];
 	//code to populate the voucher denomination field
 	$scope.onDenominationChange = function(){
 		$scope.data.voucherDenomination = $scope.data.pointsToRedeem.value / 100
@@ -31,15 +35,18 @@ app.controller('redeemController', function($scope, $ionicPopup, $state,dataServ
 
 	// redeem method call from the front end of the application
 	$scope.redeem = function() {
-		if ($scope.data.clubCardPoints > 1000)
+		if ($scope.data.clubCardPoints >= 100)
 		{
+			$scope.loading = true;
 			dataService.redeem($scope.data.clubCardNumber,$scope.data.pointsToRedeem.value)
 				.then(
 					function(data){
+						$scope.loading = false;
 						dataService.store('voucherDetails',data)
 						$state.go('barcode')  
 					},
 					function(error){
+						$scope.loading = false;
 						var alertPopup = $ionicPopup.alert({
 						title: 'Redemption Failed',
 						template: 'Internal Server Error'

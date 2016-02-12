@@ -5,7 +5,8 @@
 <br>
 <center>
 <div class="item item-positive">
-<label>Scan your {{data.denomination}} Pound Voucher to redeem </label>
+<label><h2 style="color:white"> Your &pound; {{data.denomination}} Coupon is ready to redeem
+			<br>Please Scan your Coupon!!</h2></label>
 </div>
 </center>
 
@@ -24,7 +25,10 @@
 </div>
 </center>
 <br><br>
- 
-<center><button class="button button-assertive" ng-click="cancel()">
-Cancel Voucher</button></center>
+ <br><br><br>
+ <div style="height:60px;">
+		<center><button class="button button-assertive" ng-click="cancel()" ng-hide="loading">Cancel Voucher</center>
+		<center><img src="img/loading.gif" ng-show="loading" height="4%" width="30%"></center>
+		</div>
+		<br>
 </ion-content>

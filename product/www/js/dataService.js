@@ -35,6 +35,20 @@ app.factory('dataService', function($http){
 				)
 	}
 	
+	factory.cancel = function(trxID){
+		
+		return $http({
+					method: 'POST',
+					url: 'http://ec2-52-49-218-105.eu-west-1.compute.amazonaws.com/cancelcoupon',
+					headers: {'Content-Type': 'application/json'},
+					data: { 'transactionID': trxID}
+				}).then(
+					function(response){ 
+						return response.data 
+					}
+				)
+	}
+	
     var mem = {};
 	//method for sharing of data between controllers
 	factory.store = function (key, value){

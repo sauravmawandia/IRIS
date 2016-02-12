@@ -15,17 +15,22 @@
 		<br><br>
 		<div class="list">
 		<center>
-		  <label class="item item-input">
+		  <label class="item">
 			<input type="text" placeholder="Enter 18 digit Clubcard Number" ng-model="data.clubCardNumber">
 			</label>
 			<center>
 		</div>
+		<br>
+		<div style="height:60px;">
+		<center><a ng-hide="loading" class="button icon-right ion-chevron-right button-calm" ng-click="login()">Get Points</a></center>
+		<center><img src="img/loading.gif" ng-show="loading" height="4%" width="30%"></center>
+		</div>
+		<br>
+		<center>
 		
-		<center><a class="button icon-right ion-chevron-right button-calm" ng-click="login()"> Get Points</a></center>
-	
-		<br><br>
-		<div class="item item-image">
+		<div >
 			<img src="img\TescoClubcard.jpg">
 		</div>
+		</center>
 		</div>
 </ion-content>

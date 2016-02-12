@@ -1,5 +1,6 @@
 app.controller('barcodeController', function($scope, $ionicPopup, $state,dataService) {
 $scope.data = {};
+$scope.loading = false;
 var voucherDetails=dataService.get('voucherDetails')
 var denomination = dataService.get('denomination')
 $scope.data.denomination = denomination;
@@ -21,23 +22,25 @@ $scope.$on('$ionicView.enter', function(){
         };   
           $("#barcodeTarget").barcode(bcode, "code11",settings);
       })
+	
 	   $scope.cancel= function() {
-dataService.cancel(transactionid)
-.then(
-function(data){
-//alert('success from controller');
-var alertPopup = $ionicPopup.alert({
-title: 'Cancellation Request',
-template: 'Your voucher is cancelled'})
-$state.go('home')  
-},
-function(error){
-var alertPopup = $ionicPopup.alert({
-title: 'Cancellation Failed',
-template: 'Voucher not found!'
-});;
-}
-);
-};
-}
+			$scope.loading = true;
+			dataService.cancel(transactionid)
+			.then(
+				function(data){
+						$scope.loading = false;
+						var alertPopup = $ionicPopup.alert({
+							title: 'Cancellation Success',
+							template: 'Your voucher is cancelled'})
+							$state.go('home')  
+						},
+				function(error){
+						$scope.loading = false;
+						var alertPopup = $ionicPopup.alert({
+						title: 'Cancellation Failed',
+						template: 'Voucher not found!'
+						});;
+					});
+				};
+	}
 )

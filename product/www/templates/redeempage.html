@@ -10,41 +10,69 @@
 </center>
 
 <br>
-<div >
-		<center>
-				<div id="points">
-					<label class="item item-input">
-						Points available:{{data.clubCardPoints}}
-					</label>
-				</div>
-		</center>
-</div>
-<br>
-<center><div>
-<label class="item item-input item-select">
-Points to redeem 	:
-    <select ng-model="data.pointsToRedeem" ng-options="item as item.value for item in data.denominations" style="text-align: center" ng-change="onDenominationChange()">
-	    
-    </select>
-</label>
-</div></center>
 <br>
 <div >
-			<center>
-				<div id="denomination">
-					<label class="item item-input">
-						voucher denomination : {{ data.voucherDenomination }}
-					</label>
-				</div>
-			</center>
+
+
+			<div id="points" style="width:50%; float:left; text-align:left; padding-left:10%;">
+				<label >
+						Points available 
+				</label>
+			</div>
+			<div id="points" style="width:50%; float:right; text-align:right; padding-right:20%">
+			 <b> {{data.clubCardPoints}} </b>
+			</div>
+			
+
 </div>
 <br>
-<center><div>
-<a class="button icon-right ion-chevron-right button-calm" ng-click="redeem()">Redeem Points</a>
+<br>
+<br>
+<div>
+	<div id="points" style="width:50%; float:left; text-align:left; padding-left:10%;">
+		<label >
+			Points to Redeem 
+		</label>
+	</div>
+	<div id="points" style="width:50%; float:right; text-align:right; padding-right:20%">
+		<select ng-model="data.pointsToRedeem" ng-options="item as item.value for item in data.denominations" style="text-align: center" ng-change="onDenominationChange()">
+	    </select>
+
+	</div>
+<br>
+<br>
+<br>
+<div >
+
+	<div id="points" style="width:50%; float:left; text-align:left; padding-left:10%;">
+		<label >
+			Voucher Denomination 
+		</label>
+	</div>
+	<div id="points" style="width:50%; float:right; text-align:right; padding-right:20%">
+		&pound; {{ data.voucherDenomination }}
+	</div>
+	
+</div>
+<br>
+<br>
+<br>
+
+<center>
+
+<div style="height:60px;">
+		<center><a ng-hide="loading" class="button icon-right ion-chevron-right button-calm" ng-click="redeem()">Redeem Points</a></center>
+		<center><img src="img/loading.gif" ng-show="loading" height="4%" width="30%"></center>
+		</div>
+		<br>
+<div>
+
 
 </div></center>
-<br>
-<div class="item item-image">
+
+<center>
+<div>
     <img src="img\TescoClubcard.jpg">
 </div>
+</center>
 </ion-content>
