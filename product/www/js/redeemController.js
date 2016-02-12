@@ -11,41 +11,44 @@ app.controller('redeemController', function($scope, $ionicPopup, $state,dataServ
 	$scope.data.clubCardNumber= pointsData.clubCardNumber
 		
 	var tempArray = [];
-	//alert(availablePoints);
 	
+	//code for populating the dropdown menu for points to be redeemed
 	while(availablePoints > 1000){
 		var value = Math.floor((availablePoints / 1000)) * 1000;
-		//alert(value);
 		tempArray.push({ "value" : value});
-		availablePoints = availablePoints - 1000;
+		availablePoints = availablePoints - 1000; 
 	}
 	
 	console.log(tempArray);
 	$scope.data.denominations = tempArray;
 	
+	//code to populate the voucher denomination field
 	$scope.onDenominationChange = function(){
-		//alert($scope.data.pointsToRedeem.value);
 		$scope.data.voucherDenomination = $scope.data.pointsToRedeem.value / 100;
 	}
 
-	
+	// redeem method call from the front end of the application
 	$scope.redeem = function() {
-		debugger;
-		alert($scope.data.pointsToRedeem.value)
-		dataService.redeem($scope.data.clubCardNumber,$scope.data.pointsToRedeem.value)
-					.then(
-						function(data){
-							alert('success from redeem controller');
-							$state.go('barcode')  
-						},
-						function(error){
-							alert('failure from redeem controller');
-							//alert(error.status)
-							var alertPopup = $ionicPopup.alert({
-							title: 'Redemption Failed',
-							template: 'Internal Server Error'
-						});;
-						}
-					);
-        };
+		if ($scope.data.clubCardPoints > 1000)
+		{
+			dataService.redeem($scope.data.clubCardNumber,$scope.data.pointsToRedeem.value)
+				.then(
+					function(data){
+						$state.go('barcode')  
+					},
+					function(error){
+						var alertPopup = $ionicPopup.alert({
+						title: 'Redemption Failed',
+						template: 'Internal Server Error'
+					});;
+				});
+		}
+        else
+		{
+			var alertPopup = $ionicPopup.alert({
+			title: 'Redemption Failed',
+			template: 'Insufficient Points'
 		})
+	}
+}
+})

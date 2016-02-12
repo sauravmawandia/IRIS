@@ -23,37 +23,10 @@ var app = angular.module('starter', ['ionic'])
   });
 })
 
-// app.controller('loginController', function($scope, $ionicPopup, $state, dataService) {
-    // $scope.data = {};
-    // //$scope.data.clubCardNumber = "";
-    // $scope.login = function() {
-		
-		// dataService.getPoints($scope.data.clubCardNumber)
-					// .then(
-						// function(data){
-							// //alert(data);  
-						// },
-						// function(error){
-							// //alert(error);
-						// }
-					// );
-        // };
-    // })
-
-// app.controller('redeemController', function($scope, $ionicPopup, $state) {
-    // $scope.data = {};
-    // $scope.data.pointToRedeem = "0";
-	// $scope.redeem = function() {
-		// //write logic to call the post method
-            // $state.go('home');
-		// //also write a error message on popup screen for error in redemption of points
-		// }
-	// })
-
-
+//below are defined all the routing urls
 .config(function($stateProvider, $urlRouterProvider){
   $stateProvider
-
+  
   .state('home', {
     url: "/home",
     templateUrl: "templates/homepage.html",
@@ -76,32 +49,3 @@ var app = angular.module('starter', ['ionic'])
   $urlRouterProvider.otherwise('/home');
  });
 
- 
-// app.factory('dataService', function($http){
-	
-	// var baseUrl = "localhost:8080/"; 
-	
-	// var factory = {};
-	
-	// factory.getPoints = function(clubCardNumber){
-		
-		// //alert(clubCardNumber);
-		// return $http({
-					// method: 'POST',
-					// url: 'http://localhost:8080/getpoints',
-					// headers: {'Content-Type': 'application/json'},
-					// data: { 'clubcardNumber': clubCardNumber }
-				// }).then(
-					// function(response){ 
-						// return response.data 
-					// },
-					// function(error){ 
-						// return error ;
-					// }
-				// )
-	// }
-	
-	// return factory;
-	
-	
-// });

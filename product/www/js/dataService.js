@@ -4,9 +4,9 @@ app.factory('dataService', function($http){
 	
 	var factory = {};
 	
+	//code to consume getpoints method from the service
 	factory.getPoints = function(clubCardNumber){
 		
-		//alert(clubCardNumber);
 		return $http({
 					method: 'POST',
 					url: 'http://ec2-52-49-218-105.eu-west-1.compute.amazonaws.com/getpoints',
@@ -19,9 +19,9 @@ app.factory('dataService', function($http){
 				)
 	}
 	
+	//code to consume redeem method from the service
 	factory.redeem = function(ccNumber,pointToRedeem){
 		
-		//alert(clubCardNumber);
 		return $http({
 					method: 'POST',
 					url: 'http://ec2-52-49-218-105.eu-west-1.compute.amazonaws.com/redeempoints',
@@ -36,7 +36,7 @@ app.factory('dataService', function($http){
 	}
 	
     var mem = {};
- 
+	//method for sharing of data between controllers
 	factory.store = function (key, value){
 		mem[key] = value;
 	}
