@@ -119,7 +119,7 @@ function updateRedemption(clubCardNumber, pointsRedeemed, couponData, db, callba
 
 }
 
-exports.getTransactionDetails=function(transactionID,callBack ){
+exports.getTransactionDetails = function(transactionID,callBack ){
 	// this is a asynchronous connection to the db 
 	mongoClient.connect(dbHost, function(err, db){
 		//console.log('connecting db');
@@ -128,10 +128,11 @@ exports.getTransactionDetails=function(transactionID,callBack ){
 		//Query Mongodb to get transaction details for the transactionID
 		var obj_id = new ObjectID(transactionID);
 		result = db.collection(transactionCollection)
-		         .findOne({ _id: obj_id }, function (err, doc) {
+		         .findOne({ _id: obj_id, "status":"redeemed"}, function (err, doc) {
 		             if (doc == null)
-                 throw new Error("TransactionID not found")
-					//console.log(doc);
+						throw new Error("Transaction details found or Coupon is Already cancelled")
+					
+					console.log(doc);
 					callBack(doc);					
 				 });
 				 
@@ -147,15 +148,25 @@ exports.revertPoints = function(transDetails,callBack) {
         
         
         db.collection(pointCollection).update(
-        { "clubCardNumber": transDetails.clubCardNumber }, { $inc: { "points": transDetails.pointsRedeemed} } 
+			{ "clubCardNumber": transDetails.clubCardNumber }, { $inc: { "points": transDetails.pointsRedeemed} } 
             , function (err) {
-
-                if (err) throw err;
-                console.log('updated points ')
-
-                // invoke the call back 
-                callBack("added");
-            });
+				if (err) throw err;
+                console.log('updated points in points table ')
+            }
+		);
+			
+			//update({"_id" : ObjectId("56bcf3e26457d54411777268")} , { '$set': { status: 'cancelled' }} )
+		var obj_id = new ObjectID(transDetails._id);	
+		
+		db.collection(transactionCollection).update(
+		{ _id: obj_id }, { $set: { "status": "cancelled"} } 
+        , function (err) {
+            if (err) throw err;
+            console.log('updated transaction details ');
+			
+            // invoke the call back 
+            callBack("added");
         });
+    });
 
 }
